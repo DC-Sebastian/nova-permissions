@@ -120,4 +120,36 @@ class Role extends Resource
 
         return $permissionClass::all()->unique('name');
     }
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function indexQuery(Request $request, $query)
+    {
+        if ($request->user()->hasRole('Admin') || $request->user()->hasRole('Superadmin')) return $query;
+
+        return $query->whereNotIn('name', ['Admin', 'Superadmin']);
+    }
+
+    /**
+     * Build a "relatable" query for the given resource.
+     *
+     * This query determines which instances of the model may be attached to other resources.
+     *
+     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Laravel\Nova\Fields\Field  $field
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function relatableQuery(Request $request, $query)
+    {
+       
+        if ($request->user()->hasRole('Admin') || $request->user()->hasRole('Superadmin')) return $query;
+
+        return $query->whereNotIn('name', ['Admin', 'Superadmin']);
+    }
 }
